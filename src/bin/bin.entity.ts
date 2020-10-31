@@ -20,6 +20,8 @@ export class Bin {
     @ManyToOne(() => BinType)
     type: BinType;
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, {
+        nullable: true,
+    })
     reportedBy: User;
 }

@@ -1,14 +1,29 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, Query} from '@nestjs/common';
 import * as fs from 'fs';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Bin} from './bin.entity';
-import {In, Repository} from 'typeorm';
+import {Between, In, Repository} from 'typeorm';
 
 @Injectable()
 export class BinService {
     constructor(
         @InjectRepository(Bin) private readonly binRepository: Repository<Bin>,
     ) {
+    }
+
+    async getBins(
+        latFrom: number,
+        latTo: number,
+        longFrom: number,
+        longTo: number,
+    ): Promise<Bin[]> {
+        return await this.binRepository.find({
+            relations: ['type'],
+            where: {
+                lat: Between(latFrom, latTo),
+                long: Between(longFrom, longTo),
+            },
+        });
     }
 
     async test() {
