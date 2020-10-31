@@ -17,30 +17,29 @@ export class BinController {
         @Query('to-longitude') longTo: number,
         @Query('type') types: number[],
     ): Promise<Bin[]> {
-        const typeIds = types || [];
+        const typeIDs = types || null;
 
         if (!latFrom || !latTo || !longFrom || !longTo) {
             throw new BadRequestException();
         }
 
-        // TODO typeIds filter
-
-        return this.service.getBins(latFrom, latTo, longFrom, longTo);
+        return this.service.getBins(latFrom, latTo, longFrom, longTo, typeIDs);
+        
     }
 
     @Post('/')
     async createOne(@Body() bin: CreateBinDto): Promise<void> {
-
+        this.service.addBin(bin.typeId,bin.lat,bin.long);
     }
 
     @Post('/:id/report')
-    async reportBin(@Param('id') id: number): Promise<void> {
-
+    async reportBin(@Param('id') id: number): Promise<string> {
+        return this.service.deleteBin(id);
     }
 
     @Get('/types')
     async getTypes(): Promise<BinType[]> {
-        return [];
+        return this.service.getBinTypes();
     }
 
 }
