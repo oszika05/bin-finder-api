@@ -33,8 +33,8 @@ export class BinController {
     }
 
     @Post('/:id/report')
-    async reportBin(@Param('id') id: number): Promise<string> {
-        return this.service.deleteBin(id);
+    async reportBin(@Param('id') id: number): Promise<void> {
+        this.service.deleteBin(id);
     }
 
     @Get('/types')

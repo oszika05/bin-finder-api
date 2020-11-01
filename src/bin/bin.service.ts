@@ -63,7 +63,7 @@ export class BinService {
         .execute();
     }
 
-    async deleteBin(id:number): Promise<string>{
+    async deleteBin(id:number): Promise<void>{
         const bin= await this.binRepository.findOne({
             relations: ['reportedBy'],
             where: {
@@ -80,9 +80,8 @@ export class BinService {
             .from(Bin)
             .where("id = :id", { id: id })
             .execute();
-            
-            return "Van";}
-        else return "Nincs";
+        }
+        else {}
 
         //TO DO: ha nem létezik update reportedById
         
