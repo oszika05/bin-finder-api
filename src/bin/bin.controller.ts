@@ -1,8 +1,9 @@
-import {BadRequestException, Body, Controller, Get, Param, Post, Query} from '@nestjs/common';
+import {BadRequestException, Body, Controller, Get, Param, Post, Query, Req} from '@nestjs/common';
 import {BinService} from './bin.service';
 import {Bin} from './bin.entity';
 import {CreateBinDto} from './dto/create-bin.dto';
 import {BinType} from './bin-type.entity';
+import { Request } from 'express';
 
 @Controller('bin')
 export class BinController {
@@ -33,8 +34,8 @@ export class BinController {
     }
 
     @Post('/:id/report')
-    async reportBin(@Param('id') id: number): Promise<void> {
-        this.service.deleteBin(id);
+    async reportBin(@Param('id') id: number, @Req() req:Request): Promise<void> {
+        this.service.deleteBin(id, req.body.reportedBy);
     }
 
     @Get('/types')

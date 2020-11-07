@@ -4,8 +4,6 @@ import {InjectRepository} from '@nestjs/typeorm';
 import {Bin} from './bin.entity';
 import{BinType} from './bin-type.entity'
 import {Between, In, Repository,  getConnection} from 'typeorm';
-import { userInfo } from 'os';
-import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class BinService {
@@ -63,27 +61,33 @@ export class BinService {
         .execute();
     }
 
-    async deleteBin(id:number): Promise<void>{
+    async deleteBin(id:number, req:string): Promise<void>{
         const bin= await this.binRepository.findOne({
-            relations: ['reportedBy'],
             where: {
                 id:  id 
             }}
         )
         const exist=bin.reportedBy|| null;
 
-        if (exist) {
-            
+        if (exist && !(req.normalize() === exist.normalize())) {
             await getConnection()
             .createQueryBuilder()
             .delete()
             .from(Bin)
             .where("id = :id", { id: id })
             .execute();
-        }
-        else {}
 
-        //TO DO: ha nem létezik update reportedById
+            
+        }
+        else {
+            await getConnection()
+            .createQueryBuilder()
+            .update(Bin)
+            .set({ reportedBy: req})
+            .where("id = :id", { id: id })
+            .execute();
+        }
+
         
     }
 
