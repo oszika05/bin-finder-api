@@ -1,6 +1,5 @@
 import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
 import {BinType} from './bin-type.entity';
-import {User} from '../user/user.entity';
 
 @Entity()
 export class Bin {
@@ -20,8 +19,8 @@ export class Bin {
     @ManyToOne(() => BinType)
     type: BinType;
 
-    @ManyToOne(() => User, {
+    @Column({
         nullable: true,
     })
-    reportedBy: User;
+    reportedBy: string;
 }
