@@ -4,6 +4,7 @@ import {Bin} from './bin.entity';
 import {CreateBinDto} from './dto/create-bin.dto';
 import {BinType} from './bin-type.entity';
 import { Request } from 'express';
+import {BinDto} from "./dto/bin.dto";
 
 @Controller('bin')
 export class BinController {
@@ -17,7 +18,11 @@ export class BinController {
         @Query('from-longitude') longFrom: number,
         @Query('to-longitude') longTo: number,
         @Query('type') types: number[],
-    ): Promise<Bin[]> {
+    ): Promise<BinDto[]> {
+        if (types && !Array.isArray(types)) {
+            types = [types];
+        }
+
         const typeIDs = types || null;
 
         if (!latFrom || !latTo || !longFrom || !longTo) {
@@ -30,7 +35,7 @@ export class BinController {
 
     @Post('/')
     async createOne(@Body() bin: CreateBinDto): Promise<void> {
-        this.service.addBin(bin.typeId,bin.lat,bin.long);
+        await this.service.addBin(bin.typeId, bin.lat, bin.long);
     }
 
     @Post('/:id/report')
@@ -40,7 +45,7 @@ export class BinController {
 
     @Get('/types')
     async getTypes(): Promise<BinType[]> {
-        return this.service.getBinTypes();
+        return await this.service.getBinTypes();
     }
 
 }
