@@ -1,10 +1,11 @@
-import {BadRequestException, Body, Controller, Get, Param, Post, Query, Req} from '@nestjs/common';
+import {BadRequestException, Body, Controller, Get, Param, Post, Query, Req, UseGuards} from '@nestjs/common';
 import {BinService} from './bin.service';
 import {Bin} from './bin.entity';
 import {CreateBinDto} from './dto/create-bin.dto';
 import {BinType} from './bin-type.entity';
 import { Request } from 'express';
 import {BinDto} from "./dto/bin.dto";
+import {AuthGuard} from "@nestjs/passport";
 
 @Controller('bin')
 export class BinController {
@@ -39,8 +40,10 @@ export class BinController {
     }
 
     @Post('/:id/report')
-    async reportBin(@Param('id') id: number, @Req() req:Request): Promise<void> {
-        this.service.deleteBin(id, req.body.reportedBy);
+    @UseGuards(AuthGuard('google'))
+    async reportBin(@Param('id') id: number, @Req() req: Request): Promise<void> {
+        const userId = (req as any).user.id;
+        await this.service.deleteBin(id, userId);
     }
 
     @Get('/types')

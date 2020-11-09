@@ -78,10 +78,10 @@ export class BinService {
     async deleteBin(id: number, req: string): Promise<void> {
         const bin = await this.binRepository.findOne({
                 where: {
-                    id: id
-                }
-            }
-        )
+                    id,
+                },
+            },
+        );
         const exist = bin.reportedBy || null;
 
         if (exist && !(req.normalize() === exist.normalize())) {
@@ -89,7 +89,7 @@ export class BinService {
                 .createQueryBuilder()
                 .delete()
                 .from(Bin)
-                .where("id = :id", {id: id})
+                .where('id = :id', {id})
                 .execute();
 
 
@@ -98,7 +98,7 @@ export class BinService {
                 .createQueryBuilder()
                 .update(Bin)
                 .set({reportedBy: req})
-                .where("id = :id", {id: id})
+                .where('id = :id', {id})
                 .execute();
         }
 
